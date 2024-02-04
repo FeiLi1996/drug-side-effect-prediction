@@ -1,0 +1,125 @@
+
+
+
+
+
+
+
+```{r}
+
+
+getwd( ) 
+
+```
+
+
+
+
+```{r}
+
+library(tidyverse)
+library(data.table)
+library(openxlsx)
+library(rpart)
+library(rpart.plot)
+library(caret)
+
+
+```
+
+
+#utility function
+```{r}
+#Temporary converts a datatable's character datatypes into factor. This way when summarize function is used, it lists out the counts of the categorical variables
+factorize_str <- function (dt){
+  #Making a copy to not affect the original datatable
+  dt_copy <- copy(dt)
+
+  for (col_name in colnames(dt_copy)){
+    if (is.character(dt_copy[[col_name]])){
+        set(dt_copy, j = col_name, value = as.factor(dt_copy[[col_name]]))
+    }
+  }
+  
+    
+  dt_copy
+}
+```
+
+
+
+#Step 1: Load the Data
+
+```{r}
+
+df <- openxlsx::read.xlsx('dataset synthetic 4.xlsx')
+dt <- as.data.table(df)
+dt
+
+#view summary of dataset
+summary(factorize_str(dt))
+
+```
+
+```{r}
+
+#check for NA
+
+#Check for duplicate patients
+
+```
+
+
+```{r}
+
+dt <- dt[, .(gender,age,dose_category,daily_hydration_status,has_aki)]
+
+
+
+dt[ , gender:= as.factor(gender)]
+#dt[dose_category:= as.factor(dose_category)]
+#dt[daily_hydration_status:= as.factor(daily_hydration_status)]
+#dt[has_aki:= has_aki(daily_hydration_status)]
+
+dt[, dose_category := factor(dose_category, levels = c('low','med','high'))]
+dt[, daily_hydration_status := factor(daily_hydration_status, levels = c('bad','good'))]
+
+```
+
+
+```{r}
+
+trainIndex <- createDataPartition(dt$has_aki, p = .7, 
+                                  list = FALSE, 
+                                  times = 1)
+head(trainIndex)
+train_dt <- dt[ trainIndex,]
+test_dt  <- dt[-trainIndex,]
+
+
+prop.table(table(train_dt$has_aki))
+prop.table(table(test_dt$has_aki))
+```
+```{r}
+train_dt
+
+```
+
+
+
+
+```{r}
+fit <- rpart(has_aki ~., data = train_dt, method = 'class')
+#rpart.plot(fit, extra = 106)
+rpart.plot(fit, extra = 106)
+
+```
+
+```{r}
+
+print(fit)
+```
+
+
+
+
