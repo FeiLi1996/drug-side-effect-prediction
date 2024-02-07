@@ -1,6 +1,6 @@
 
-# HEART DISEASE ANALYSIS
-## About Heart Disease
+# Acute Kidney Injury
+## About Acute Kidney Injury
 
 Acute Kidney Injury(AKI) is when your kidney function decreases suddenly relative to its normal function. It can range from partial function to complete shutoff. Prolong AKI can lead to kidney failure. AKI also complicates treatment process because lots of drugs  rely on the kidney for removal.
 Research has shown that patients with AKI tend to stay in the hospital longer[source:https://link.springer.com/article/10.1007/s00467-019-04431-3].
