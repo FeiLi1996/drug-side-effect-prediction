@@ -1,20 +1,70 @@
 
+# HEART DISEASE ANALYSIS
+## About Heart Disease
+
+Acute Kidney Injury(AKI) is when your kidney function decreases suddenly relative to its normal function. It can range from partial function to complete shutoff. Prolong AKI can lead to kidney failure. AKI also complicates treatment process because lots of drugs  rely on the kidney for removal.
+Research has shown that patients with AKI tend to stay in the hospital longer[source:https://link.springer.com/article/10.1007/s00467-019-04431-3].
+
+
+One common cause of AKI is the medication class named  Non-steroidal anti-inflammatory drugs(NSAID). A common NSAID is Ibuprofen which is an over the counter pain killer. From this dataset, we will try to predict which patients on Ibuprofen will likely experience an AKI. This can be helpful information to save healthcare cost by promoting early interventions on those likely to get AKI.
+
+
+
+
+## About the Data set
+
+This  synthetic dataset gives information related to patients with or without AKI that showed up to a hospital. Dataset has 7 columns. Here the goal is to predict if the patient has AKI or not using a decision tree algorithm.
+
+* Attribute Information
+  +	patient_id 
+      +	__Meaning__: The unique ID for a patient
+      +	__Variable Type__: string
+      +	__Possible values__:  any numbers from 1 to infinity
+  +	gender 
+      +	__Meaning__: the biological sex of the patient(male or female). 
+      +	__Variable Type__: string
+      +	__Possible values__:  ‘m’ or ‘f’
+  +	age 
+      +	__Meaning__: time since birth
+      +	__Variable Type__: double
+      +	__Possible values__:  25 , 45, etc
+  +	drug_name 
+      +	__Meaning__: name of the drug
+      +	__Variable Type__: string
+      +	__Possible values__: ‘ibuprofen’
+  +	dose_category
+      +	__Meaning__: dose  strength category of the drug
+      +	__Variable Type__: string
+      +	__Possible values__:  ‘low’ means low dose; ‘med’ means average dose; ‘high’ means overdose
+  +	daily_hydration_status
+      +	__Meaning__:  How much water the person drinks daily
+      +	__Variable Type__: string
+      +	__Possible values__:   ‘bad’ means the person doesn’t really meet daily hydration requirements; ‘good’ means the person meets the daily hydration requirements.
+  +	has_aki 
+      +	__Meaning__: This is the target we are interested in predicting. 1 means the patient has Acute kidney injury (AKI). 0 means the person doesn’t have AKI
+      +	__Variable Type__: integer
+      +	__Possible values__:   1 or 0
+
+# Table of Contents
+1. Import Packages
+2. EDA
+3. Preparing ML models
+4. Models evaluation
+5. Model in action and intepretation
+6. Conclusion
 
 
 
 
 
 
-```{r}
-
-
-getwd( ) 
-
-```
 
 
 
 
+
+
+# 1) Import Packages
 ```{r}
 
 library(tidyverse)
@@ -48,7 +98,7 @@ factorize_str <- function (dt){
 
 
 
-#Step 1: Load the Data
+#2) EDA
 
 ```{r}
 
@@ -70,6 +120,7 @@ summary(factorize_str(dt))
 ```
 
 
+#3) Preparing ML models
 ```{r}
 
 dt <- dt[, .(gender,age,dose_category,daily_hydration_status,has_aki)]
@@ -107,7 +158,7 @@ train_dt
 
 
 
-
+#4) Model in action and intepretation
 ```{r}
 fit <- rpart(has_aki ~., data = train_dt, method = 'class')
 #rpart.plot(fit, extra = 106)
@@ -120,6 +171,13 @@ rpart.plot(fit, extra = 106)
 print(fit)
 ```
 
+We know old age is a risk factor
+https://www.nhs.uk/conditions/acute-kidney-injury/
 
 
 
+
+#5) Models evaluation
+
+
+#6) Conclusion
