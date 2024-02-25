@@ -2,14 +2,12 @@
 # Acute Kidney Injury
 ## About Acute Kidney Injury
 
-Acute Kidney Injury(AKI) is when your kidney function decreases suddenly relative to its normal function. It can range from partial function to complete shutoff. Prolong AKI can lead to kidney failure. AKI also complicates treatment process because lots of drugs  rely on the kidney for removal.
-Research has shown that patients with AKI tend to stay in the hospital longer[source:https://link.springer.com/article/10.1007/s00467-019-04431-3].
+Acute Kidney Injury(AKI) is when your kidney function decreases suddenly relative to its normal function. It can range from partial function reduction to complete shutoff. Prolong AKI can lead to kidney failure. AKI also complicates treatment process because lots of drugs  rely on the kidney for removal.
+Research has shown that patients with AKI tend to stay in the hospital longer 
+[(source)](https://link.springer.com/article/10.1007/s00467-019-04431-3).
 
 
-One common cause of AKI is the medication class named  Non-steroidal anti-inflammatory drugs(NSAID). A common NSAID is Ibuprofen which is an over the counter pain killer. From this dataset, we will try to predict which patients on Ibuprofen will likely experience an AKI. This can be helpful information to save healthcare cost by promoting early interventions on those likely to get AKI.
-
-
-
+One common cause of AKI is the medication class named  Non-steroidal anti-inflammatory drugs(NSAID). A common NSAID is Ibuprofen which is a popular over the counter pain killer. From this dataset, we will try to predict which patients on Ibuprofen will likely experience an AKI. This can be helpful information to save healthcare cost by promoting early interventions on those likely to get AKI.
 
 ## About the Data set
 
@@ -25,7 +23,7 @@ This  synthetic dataset gives information related to patients with or without AK
       +	__Variable Type__: string
       +	__Possible values__:  ‘m’ or ‘f’
   +	age 
-      +	__Meaning__: time since birth
+      +	__Meaning__: time since birth(years)
       +	__Variable Type__: double
       +	__Possible values__:  25 , 45, etc
   +	drug_name 
@@ -47,41 +45,33 @@ This  synthetic dataset gives information related to patients with or without AK
 
 # Table of Contents
 1. Import Packages
-2. EDA
+2. Data load + EDA
 3. Preparing ML models
-4. Models evaluation
-5. Model in action and intepretation
+4. Model in action and interpretation
+5. Models evaluation
 6. Conclusion
 
 
-
-
-
-
-
-
-
-
-
-
 # 1) Import Packages
-```{r}
-
+```{r ,warning=FALSE ,error=FALSE ,message=FALSE ,results='hide'}
 library(tidyverse)
 library(data.table)
 library(openxlsx)
 library(rpart)
 library(rpart.plot)
 library(caret)
-
-
 ```
 
 
-#utility function
+utility function
 ```{r}
-#Temporary converts a datatable's character datatypes into factor. This way when summarize function is used, it lists out the counts of the categorical variables
+
 factorize_str <- function (dt){
+  #Purpose:Temporary converts a datatable's character datatypes into factor. This way when summarize function is used, it lists out the counts of the categorical variables
+  #input:(datatable)
+  #output:(datatable) returns a copy of the datatable but with all the character datatypes as factors
+  
+  
   #Making a copy to not affect the original datatable
   dt_copy <- copy(dt)
 
@@ -98,86 +88,173 @@ factorize_str <- function (dt){
 
 
 
-#2) EDA
+#2) Data load + EDA
 
 ```{r}
 
-df <- openxlsx::read.xlsx('dataset synthetic 4.xlsx')
+df <- openxlsx::read.xlsx('dataset synthetic 5.xlsx')
 dt <- as.data.table(df)
-dt
 
+head(dt)
+```
+```{r}
 #view summary of dataset
 summary(factorize_str(dt))
+glimpse(dt)
 
 ```
 
+
+
 ```{r}
 
-#check for NA
+#check for NA and the percentage NA makes up for those columns with NA
+round(colSums(is.na(dt)) * 100/nrow(dt) ,1)
+
 
 #Check for duplicate patients
+#Should return empty if the data is unique at patient level
+dt[ ,.N , by='patient_id'][N>1] 
 
 ```
 
-
-#3) Preparing ML models
 ```{r}
+#temporary categorical variable to aid with ggplot visualization
+dt[ , has_aki_category:=fifelse(has_aki==1,'yes_aki','no_aki')]
 
-dt <- dt[, .(gender,age,dose_category,daily_hydration_status,has_aki)]
+#Temporary  column for a constant to aid with ggplot visualization
+dt[ , constant:=1]
 
-
-
+#converting to factors
 dt[ , gender:= as.factor(gender)]
-#dt[dose_category:= as.factor(dose_category)]
-#dt[daily_hydration_status:= as.factor(daily_hydration_status)]
-#dt[has_aki:= has_aki(daily_hydration_status)]
-
 dt[, dose_category := factor(dose_category, levels = c('low','med','high'))]
 dt[, daily_hydration_status := factor(daily_hydration_status, levels = c('bad','good'))]
 
 ```
 
 
+
+##Graphs
 ```{r}
 
+# Distribution of patients' age split by Target variable
+ggplot(dt, aes(x = age , fill=has_aki_category)) + 
+  geom_density(alpha = 0.5) +
+  ggtitle("Age Distributions of AKI Groups") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+- insight: Not normally distributed. Seems like the seniors and children/young adults are more likely to suffer AKI from Ibuprofen
+
+
+```{r}
+
+# Visualize the proportion of dose categories that resulted in an event of AKI  
+ggplot(dt, aes (fill=has_aki_category ,y=constant, x=dose_category)) + 
+  geom_bar(position="fill", stat="identity") + 
+  labs( title = "AKI Proportion Respective to Dosing Category", y = "proportions") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+- insight: Looks like high dose category has much higher proportion of AKI compared to low and med doses.
+
+
+
+```{r}
+# Visualize the proportion of gender category that resulted in an event of AKI  
+ggplot(dt, aes (fill=has_aki_category ,y=constant, x=gender)) + 
+    geom_bar(position="fill", stat="identity") + 
+  labs( title = "AKI Proportion Respective to Gender Category", y = "proportions") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+- insight: Gender seems to have no impact on whether a patient acquires AKI
+
+
+
+
+```{r}
+# Visualize the proportion of hydration status that resulted in an event of AKI 
+ggplot(dt, aes (fill=has_aki_category ,y=constant, x=daily_hydration_status)) + 
+    geom_bar(position="fill", stat="identity") + 
+  labs( title = "AKI Proportion Respective to Hydration Category", y = "proportions") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+- insight: Patients in the bad hydration status has much higher proportion of AKI
+
+
+
+
+#3) Preparing ML models
+```{r}
+#selecting relevant columns
+dt_less_columns <- dt[, .(gender,age,dose_category,daily_hydration_status,has_aki)]
+
+```
+
+```{r}
+#set seed to regenerate the same graph
+set.seed(10)
+
+
+#Split into training/testing
 trainIndex <- createDataPartition(dt$has_aki, p = .7, 
                                   list = FALSE, 
                                   times = 1)
-head(trainIndex)
-train_dt <- dt[ trainIndex,]
-test_dt  <- dt[-trainIndex,]
 
+train_dt <- dt_less_columns[ trainIndex,]
+test_dt  <- dt_less_columns[-trainIndex,]
 
+#Check if the proportions are similiar post split
 prop.table(table(train_dt$has_aki))
 prop.table(table(test_dt$has_aki))
 ```
 ```{r}
-train_dt
-
+head(train_dt)
 ```
 
 
 
 #4) Model in action and intepretation
 ```{r}
+#'class' for method because we are interested in classification instead of regression
 fit <- rpart(has_aki ~., data = train_dt, method = 'class')
-#rpart.plot(fit, extra = 106)
 rpart.plot(fit, extra = 106)
 
 ```
 
 ```{r}
-
+#see the rules
 print(fit)
 ```
+* insights:
+  + We know that  old age is a risk factor [https://www.nhs.uk/conditions/acute-kidney-injury/]
+  + Good hydration status is important to maintain fluid flow to the kidneys so that AKI doesn't happen
+  + Makes sense that low dose is least likely going to lead to AKI
+  + As predicted from visualizing the gender proportion graph, gender feature doesn't really help us predict if someone has AKI. That is probably why gender feature wasn't included in the tree.
 
-We know old age is a risk factor
-https://www.nhs.uk/conditions/acute-kidney-injury/
 
 
 
 
 #5) Models evaluation
 
+```{r}
+#prediction
+predicted_results <-predict(fit, test_dt, type = 'class')
+```
 
+
+
+```{r}
+#matrix table
+confusion_matrix <- table(test_dt$has_aki, predicted_results)
+confusion_matrix
+
+#accuracy
+accuracy_Test <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(paste('Accuracy for test', accuracy_Test))
+```
 #6) Conclusion
+
+Exploratory data analysis showed that patients that experienced AKI are usually involved with factors like high dose Ibuprofen, age greater than 54 and/or  bad daily hydration status. Gender wasn't an important factor as we seen in the graph and the exclusion of the feature in the decision tree. Overall, the accuracy of the model was 93%. Decision trees tend to over fit so we could improve the accuracy validity by tuning the parameters like the depth of the tree, minimum samples in leaf nodes , etc.
+
