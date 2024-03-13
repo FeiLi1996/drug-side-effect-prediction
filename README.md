@@ -61,17 +61,17 @@ This  synthetic dataset gives information related to patients with or without AK
 ## Group Comparison graph 4
 ![Alt text](hydration_status.PNG)
 
-- insight: Patients in the bad hydration status has much higher proportion of AKI
+- insight: Patients in the bad hydration status group has much higher proportion of AKI
 
 ## Decision Tree Model
 ![Alt text](decision_tree_model.PNG)
 
 
 * insights:
-  + We know that  old age is a risk factor [https://www.nhs.uk/conditions/acute-kidney-injury/]
-  + Good hydration status is important to maintain fluid flow to the kidneys so that AKI doesn't happen
-  + Makes sense that low dose is least likely going to lead to AKI
-  + As predicted from visualizing the gender proportion graph, gender feature doesn't really help us predict if someone has AKI. That is probably why gender feature wasn't included in the tree
+  + We know that  old age is a risk factor [https://www.nhs.uk/conditions/acute-kidney-injury/] .
+  + Good hydration status is important to maintain fluid flow to the kidneys so that AKI doesn't happen.
+  + Makes sense that low dose is least likely going to lead to AKI.
+  + As predicted from visualizing the gender proportion graph, gender feature doesn't really help us predict if someone has AKI. That is probably why gender feature wasn't included in the tree.
 
 ## Conclusion
 - Exploratory data analysis showed that patients that experienced AKI are usually involved with factors like high dose Ibuprofen, old age and/or  bad daily hydration status. Gender wasn't an important factor as we seen in the graph and the exclusion of the feature in the decision tree. Overall, the accuracy of the model was 93%. Decision trees tend to over fit so we could improve the accuracy validity by tuning the parameters like the depth of the tree, minimum samples in leaf nodes , etc.
