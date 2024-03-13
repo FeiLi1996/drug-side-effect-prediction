@@ -11,7 +11,7 @@ One common cause of AKI is the medication class named  Non-steroidal anti-inflam
 
 ## About the Data set
 
-This  synthetic dataset gives information related to patients with or without AKI that showed up to a hospital. Dataset has 7 columns. Here the goal is to predict if the patient has AKI or not using a decision tree algorithm.
+This  synthetic data set gives information related to patients with or without AKI that showed up to a hospital. Data set has 7 columns. Here the goal is to predict if the patient has AKI or not using a decision tree algorithm.
 
 * Attribute Information
   +	patient_id 
@@ -134,7 +134,7 @@ dt[, daily_hydration_status := factor(daily_hydration_status, levels = c('bad','
 
 
 
-##Graphs
+## Graphs
 ```{r}
 
 # Distribution of patients' age split by Target variable
@@ -144,6 +144,7 @@ ggplot(dt, aes(x = age , fill=has_aki_category)) +
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
+<br/>
 - insight: Not normally distributed. Seems like the seniors and children/young adults are more likely to suffer AKI from Ibuprofen
 
 
@@ -155,6 +156,7 @@ ggplot(dt, aes (fill=has_aki_category ,y=constant, x=dose_category)) +
   labs( title = "AKI Proportion Respective to Dosing Category", y = "proportions") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
+<br/>
 - insight: Looks like high dose category has much higher proportion of AKI compared to low and med doses.
 
 
@@ -167,6 +169,7 @@ ggplot(dt, aes (fill=has_aki_category ,y=constant, x=gender)) +
   theme(plot.title = element_text(hjust = 0.5))
 
 ```
+<br/>
 - insight: Gender seems to have no impact on whether a patient acquires AKI
 
 
@@ -179,7 +182,8 @@ ggplot(dt, aes (fill=has_aki_category ,y=constant, x=daily_hydration_status)) +
   labs( title = "AKI Proportion Respective to Hydration Category", y = "proportions") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
-- insight: Patients in the bad hydration status has much higher proportion of AKI
+<br/>
+- insight: Patients in the bad hydration status group has much higher proportion of AKI
 
 
 
@@ -256,5 +260,5 @@ print(paste('Accuracy for test', accuracy_Test))
 ```
 #6) Conclusion
 
-Exploratory data analysis showed that patients that experienced AKI are usually involved with factors like high dose Ibuprofen, age greater than 54 and/or  bad daily hydration status. Gender wasn't an important factor as we seen in the graph and the exclusion of the feature in the decision tree. Overall, the accuracy of the model was 93%. Decision trees tend to over fit so we could improve the accuracy validity by tuning the parameters like the depth of the tree, minimum samples in leaf nodes , etc.
+Exploratory data analysis showed that patients that experienced AKI are usually involved with factors like high dose Ibuprofen, old age and/or  bad daily hydration status. Gender wasn't an important factor as we seen in the graph and the exclusion of the feature in the decision tree. Overall, the accuracy of the model was 93%. Decision trees tend to over fit so we could improve the accuracy validity by tuning the parameters like the depth of the tree, minimum samples in leaf nodes , etc.
 
