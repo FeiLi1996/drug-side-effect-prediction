@@ -2,7 +2,7 @@
 
 ## About Acute Kidney Injury
 
-Acute Kidney Injury(AKI) is when your kidney function decreases suddenly relative to its normal function. It can range from partial function reduction to complete shutoff. Prolong AKI can lead to kidney failure. AKI also complicates treatment process because lots of drugs  rely on the kidney for removal.
+Acute Kidney Injury(AKI) is described as a sudden decrease in kidney function relative to its normal function. It can range from partial function reduction to complete loss in function. Prolonged AKI can lead to kidney failure. AKI also complicates treatment processes of a variety of drugs since they  rely on the kidney for removal.
 Research has shown that patients with AKI tend to stay in the hospital longer 
 [(source)](https://link.springer.com/article/10.1007/s00467-019-04431-3).
 
